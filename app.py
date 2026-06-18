@@ -14,6 +14,21 @@ router = APIRouter()
 app = FastAPI(title="Нормоконтроль")
 
 
+def _version() -> str:
+    p = Path(__file__).parent / "VERSION"
+    return p.read_text(encoding="utf-8").strip() if p.exists() else "0.0.0"
+
+
+@router.get("/version")
+async def version():
+    return JSONResponse({"version": _version(), "service": "norm-control"})
+
+
+@router.get("/health")
+async def health():
+    return JSONResponse({"status": "ok", "version": _version(), "service": "norm-control"})
+
+
 @router.get("/norm", response_class=HTMLResponse)
 async def norm_page() -> str:
     html = """
